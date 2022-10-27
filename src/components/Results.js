@@ -84,7 +84,7 @@ function App({ countriesByContinent, continent, metric, max, allCountries }) {
         {(metric === "ALL" || metric === "areaInSqKm") && <PieChart highcharts={Highcharts} options={optionsAreaInSqKm} />}
       </div>
       <TableContainer>
-        <Table sx={{ maxWidth: 750, margin: "0 auto", }} aria-label="customized table">
+        <Table sx={{ maxWidth: 750, margin: "0 auto" }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell>continentName</StyledTableCell>

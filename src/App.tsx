@@ -1,26 +1,44 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Axios from "axios";
 import { Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Results from "./components/Results";
 
+interface IState {
+  countries: {
+    countryName: string,
+    population: string,
+    areaInSqKm: string,
+    continentName: string,
+  }[],
+  country: {
+    countryName: string,
+    population: string,
+    areaInSqKm: string,
+    continentName: string,
+  },
+  countriesByContinent: {
+    [key: string]: object[],
+  },
+}
+
 function App() {
-  const [countriesByContinent, setCountriesByContinent] = useState(null);
-  const [allCountries, setAllCountries] = useState(null);
-  const [continent, setContinent] = useState("ALL");
-  const [metric, setMetric] = useState("ALL");
-  const [max, setMax] = useState(5);
+  const [countriesByContinent, setCountriesByContinent] = useState<IState["countriesByContinent"] | null>(null);
+  const [allCountries, setAllCountries] = useState<IState["countries"]>([]);
+  const [continent, setContinent] = useState<string>("ALL");
+  const [metric, setMetric] = useState<string>("ALL");
+  const [max, setMax] = useState<number | string>(5);
 
   // We want countries to be in alphabetical order
-  function sortingCountries(a, b) {
+  function sortingCountries(a: IState["country"], b: IState["country"]) {
     const nameA = a.countryName.toUpperCase();
     const nameB = b.countryName.toUpperCase();
     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
   }
 
-  function selectProperties(objectArray) {
+  function selectProperties(objectArray: IState["countries"]) {
     // first we keep the important properties and we sort the objects by countryName
-    return objectArray.map((country) => {
+    return objectArray.map((country: IState["country"]) => {
       return {
         countryName: country.countryName,
         population: country.population,
@@ -30,14 +48,14 @@ function App() {
     }).sort(sortingCountries);
   }
 
-  function groupBy(objectArray, property) {
+  function groupBy(objectArray: IState["countries"], property: string) {
     // Group countries depending on their continent
-    return objectArray.reduce((acc, obj) => {
-      const key = obj[property];
+    return objectArray.reduce((acc, obj: object) => {
+      const key = obj[property as keyof typeof obj];
       const curGroup = acc[key] ?? [];
 
       return { ...acc, [key]: [...curGroup, obj] };
-    }, {});
+    }, {} as Record<string, object[]>);
   }
 
   async function loadGeoNames() {
@@ -49,7 +67,7 @@ function App() {
       if (response.status !== 200) return console.error('ERROR');
       // Filtering our data to keep the essential information
       setAllCountries(selectProperties(response.data.geonames));
-      const filteredData = selectProperties(response.data.geonames, "continentName")
+      const filteredData = selectProperties(response.data.geonames);
       setCountriesByContinent(groupBy(filteredData, "continentName"));
     } catch (error) {
       console.log(error);
