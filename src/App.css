@@ -1,0 +1,38 @@
+.app {
+  text-align: center;
+  padding-bottom: 5rem;
+  background-color: antiquewhite;
+}
+
+.app-header {
+  background-color: #282c34;
+  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.app-button {
+  color: #61dafb;
+}
+
+.app-filters {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  max-width: 500px;
+}
+
+.app-input {
+  margin:0 1rem;
+}
+
+.results-pie {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
