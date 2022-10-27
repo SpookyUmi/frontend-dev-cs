@@ -23,21 +23,45 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function App({ countriesByContinent, continent, metric, max, allCountries }) {
+interface IProps {
+  allCountries: {
+    countryName: string,
+    population: string,
+    areaInSqKm: string,
+    continentName: string,
+  }[],
+  countriesByContinent: {
+    [key: string]: IProps["allCountries"],
+  },
+  continent: string,
+  metric: string,
+  max: string,
+}
+
+interface IState {
+  country: {
+    countryName: string,
+    population: string,
+    areaInSqKm: string,
+    continentName: string,
+  },
+}
+
+function Results({ countriesByContinent, continent, metric, max, allCountries }: IProps) {
   // display the countries based on the continent selected, and apply the maximum value chosen
-  const displayedContinent = continent === "ALL" ? allCountries.slice(0, max) : countriesByContinent[continent].slice(0, max);
-  const others = continent === "ALL" ? allCountries.slice(max) : countriesByContinent[continent].slice(max);
+  const displayedContinent: IProps["allCountries"] = continent === "ALL" ? allCountries.slice(0, parseInt(max)) : countriesByContinent[continent].slice(0, parseInt(max));
+  const others = continent === "ALL" ? allCountries.slice(parseInt(max)) : countriesByContinent[continent].slice(parseInt(max));
 
   // Computing the total of "population" and "areaInSqKm"
-  function computeTotal(array, property) {
-    const filtered = array.map((el) => parseInt(el[property], 10));
+  function computeTotal(array: object[], property: string) {
+    const filtered = array.map((el) => parseInt(el[property as keyof typeof el], 10));
     return filtered.reduce((previous, current) => previous + current, 0)
   }
 
-  function tranformData(property) {
-    let pieData = displayedContinent.map((country) => {
+  function tranformData(property: string) {
+    let pieData = displayedContinent.map((country: IState["country"]) => {
       return {
-        y: parseInt(country[property]),
+        y: parseInt(country[property as keyof typeof country]),
         name: country.countryName,
       }
     })
@@ -118,4 +142,4 @@ function App({ countriesByContinent, continent, metric, max, allCountries }) {
   );
 }
 
-export default App;
+export default Results;

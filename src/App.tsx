@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import Axios from "axios";
-import { Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Button, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import Results from "./components/Results";
 
 interface IState {
@@ -18,7 +18,7 @@ interface IState {
     continentName: string,
   },
   countriesByContinent: {
-    [key: string]: object[],
+    [key: string]: IState["countries"],
   },
 }
 
@@ -27,7 +27,7 @@ function App() {
   const [allCountries, setAllCountries] = useState<IState["countries"]>([]);
   const [continent, setContinent] = useState<string>("ALL");
   const [metric, setMetric] = useState<string>("ALL");
-  const [max, setMax] = useState<number | string>(5);
+  const [max, setMax] = useState<string>("5");
 
   // We want countries to be in alphabetical order
   function sortingCountries(a: IState["country"], b: IState["country"]) {
@@ -55,7 +55,7 @@ function App() {
       const curGroup = acc[key] ?? [];
 
       return { ...acc, [key]: [...curGroup, obj] };
-    }, {} as Record<string, object[]>);
+    }, {} as IState["countriesByContinent"]);
   }
 
   async function loadGeoNames() {
@@ -125,10 +125,10 @@ function App() {
           <Select
             labelId="max"
             id="max"
-            defaultValue={5}
+            defaultValue="5"
             value={max}
             label="Max"
-            onChange={(event) => {
+            onChange={(event: SelectChangeEvent<string>) => {
               setMax(event.target.value);
             }}
           >
